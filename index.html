@@ -1,870 +1,388 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise Estratégica - Plano de Saúde</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Comparativo de Plano de Saúde - Divisão por Famílias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* =========================================
-           1. THE SETUP & CORE VARIABLES
-           ========================================= */
-        * { box-sizing: border-box; }
-        
-        p { margin: 0; margin-bottom: 15px; }
-        
         body {
-            background-color: #cbd5e1;
-            display: grid;
-            gap: 20px;
-            grid-template-columns: 1fr;
-            margin: 0;
-            min-height: 100vh;
-            padding: 20px 0;
-            place-items: center;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .table-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .family-header {
+            background: linear-gradient(90deg, #f1f5f9 0%, #ffffff 100%);
         }
 
-        .slide-container {
-            align-items: center;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            font-family: 'Lato', sans-serif;
-            height: 720px;
-            justify-content: center;
-            overflow: hidden;
-            padding: 60px;
-            position: relative;
-            width: 1280px;
+        /* Regras específicas para impressão/salvar em PDF */
+        @media print {
+            @page { size: landscape; } /* Paisagem para caber mais colunas */
+            body {
+                background-color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 0.85rem;
+            }
+            
+            .avoid-break {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .page-break-before {
+                page-break-before: always;
+                break-before: page;
+            }
+
+            thead { display: table-header-group; }
+            tr { page-break-inside: avoid; break-inside: avoid; }
+
+            .max-w-6xl {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .table-shadow {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+            }
         }
-
-        .slide-container.dark-theme {
-            background-color: #0f172a;
-        }
-
-        .slide-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            z-index: 0;
-        }
-        .slide-container.dark-theme::before {
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
-        }
-
-        .slide-container > * { position: relative; z-index: 1; }
-
-        /* =========================================
-           2. TYPOGRAPHY
-           ========================================= */
-        .slide-container h1, .slide-container h2, .slide-container h3 {
-            color: #1e293b;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            margin: 0;
-        }
-        .slide-container.dark-theme h1, 
-        .slide-container.dark-theme h2, 
-        .slide-container.dark-theme h3 {
-            color: #f8fafc;
-        }
-
-        .slide-container p, .slide-container li, .slide-container .subtitle,
-        .slide-container .number-label, .slide-container .chart-summary,
-        .slide-container .bar .label, .slide-container th, .slide-container td,
-        .slide-container .bleed-text-side p {
-            color: #475569;
-            font-family: 'Lato', sans-serif;
-            font-size: 18px;
-            line-height: 1.5;
-        }
-        .slide-container.dark-theme p, .slide-container.dark-theme .subtitle {
-            color: #94a3b8;
-        }
-
-        .slide-container h1 { font-size: 70px; }
-        .slide-container .slide-title { font-size: 40px; font-weight: 600; margin-bottom: 40px; text-align: left; width: 100%; color: #0f172a; }
-        .slide-container.dark-theme .slide-title { color: #f8fafc; }
-        .slide-container h3 { font-size: 32px; font-weight: 600; margin-bottom: 15px; }
-        .slide-container .subtitle { font-weight: 400; margin: 20px auto; font-size: 24px; }
-
-        .slide-container .content-area {
-            align-items: center;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: center;
-            width: 100%;
-        }
-
-        /* =========================================
-           3. LAYOUTS & INTERACTIVE ELEMENTS
-           ========================================= */
-        .title-layout { text-align: center; }
-        
-        .two-column {
-            align-items: flex-start; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; width: 100%;
-        }
-        .two-column ul { list-style: disc; margin: 0; padding-left: 25px; }
-        .two-column li { margin-bottom: 15px; }
-        
-        /* Interactive Family Cards */
-        .family-card {
-            background-color: #f8fafc; 
-            border-radius: 12px; 
-            border: 2px solid #e2e8f0; 
-            padding: 30px 40px; 
-            text-align: center;
-            transition: all 0.4s ease;
-            cursor: default;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .family-card:hover {
-            border-color: #6366f1;
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.15);
-            transform: translateY(-5px);
-        }
-        .family-card h3 { color: #6366f1; transition: 0.3s; }
-        .family-card:hover h3 { color: #4f46e5; }
-        .family-card .instruction { font-size: 14px; color: #94a3b8; font-style: italic; margin-top: 10px; transition: 0.3s; }
-        .family-card:hover .instruction { opacity: 0; height: 0; margin: 0; }
-        
-        .family-details {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.5s ease-in-out;
-            text-align: left;
-        }
-        .family-card:hover .family-details {
-            max-height: 300px;
-            opacity: 1;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-        }
-        .family-details ul { list-style: none; padding: 0; }
-        .family-details li { margin-bottom: 10px; padding-left: 20px; position: relative; }
-        .family-details li::before { content: '\f007'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; left: 0; color: #10b981; font-size: 14px; top: 3px; }
-
-        /* Images */
-        .image-wrapper { border-radius: 12px; height: 400px; max-width: 100%; overflow: hidden; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .image-wrapper img { height: 100%; max-width: 100%; object-fit: cover; width: 100%; }
-        .two-column .image-wrapper img { object-fit: contain; background: #f1f5f9; }
-        .image-cover { object-fit: cover !important; }
-
-        /* Tiled Icons */
-        .tiled-content { align-items: stretch; display: flex; gap: 40px; justify-content: center; width: 100%; }
-        .tile {
-            align-items: center; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;
-            display: flex; flex-direction: column; flex: 1; justify-content: flex-start; padding: 30px; text-align: center;
-        }
-        .tile .icon { color: #10b981; font-size: 48px; margin-bottom: 20px; }
-        .tile h3 { font-size: 26px; color: #1e293b; margin-bottom: 10px; }
-
-        /* Highlighted Numbers */
-        .highlight-numbers-layout > div:first-child { flex: 0 0 40%; text-align: center; }
-        .highlight-numbers-layout .number { color: #10b981; font-size: 130px; font-weight: 700; font-family: 'Poppins', sans-serif; line-height: 1; margin-bottom: 10px; }
-        .highlight-numbers-layout .number-label { font-size: 24px; font-weight: 700; color: #64748b; }
-
-        /* Styled Bullets */
-        .bullet-list { max-width: 1000px; width: 100%; }
-        .bullet-list ul { list-style: none; margin: 0; padding: 0; }
-        .bullet-list li { margin-bottom: 25px; padding-left: 50px; position: relative; font-size: 20px; }
-        .bullet-list i { color: #6366f1; font-size: 28px; left: 0; margin-top: 2px; position: absolute; text-align: center; top: 0; }
-        .bullet-list li strong { color: #1e293b; font-weight: 700; }
-
-        /* Interactive Tabs */
-        .interactive-tabs-container { width: 100%; display: flex; flex-direction: column; }
-        .tab-buttons { display: flex; gap: 15px; margin-bottom: 25px; justify-content: center; }
-        .tab-btn { 
-            background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 30px; 
-            color: #475569; cursor: pointer; font-family: 'Poppins', sans-serif; 
-            font-size: 16px; font-weight: 600; padding: 12px 30px; 
-            transition: all 0.3s ease; display: flex; align-items: center; gap: 10px;
-        }
-        .tab-btn:hover { background: #e2e8f0; transform: translateY(-2px); }
-        .tab-btn.active { background: #10b981; border-color: #10b981; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
-        
-        .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Tables */
-        .table-layout { width: 100%; }
-        .table-layout table { border-collapse: collapse; width: 100%; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px #e2e8f0; }
-        .table-layout th, .table-layout td { border-bottom: 1px solid #e2e8f0; padding: 16px 20px; text-align: left; }
-        .table-layout th { background-color: #f8fafc; color: #1e293b; font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif; }
-        .table-layout tr:last-child td { border-bottom: none; }
-        .table-layout .highlight-col { background-color: rgba(16, 185, 129, 0.08); font-weight: bold; color: #047857; }
-        .table-layout .not-rec { opacity: 0.6; }
-        .table-layout .row-header { font-weight: bold; color: #334155; }
-        .table-layout .sub-text { display: block; font-size: 12px; color: #94a3b8; font-weight: normal; margin-top: 4px; }
-        .table-layout td { font-size: 16px; }
-
-        /* =========================================
-           BENEFICIARY INTERACTIVE LAYOUT
-           ========================================= */
-        .ben-layout { display: flex; gap: 20px; width: 100%; height: 380px; }
-        .ben-sidebar { flex: 0 0 250px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; }
-        .ben-btn {
-            background: #ffffff; border: 2px solid #e2e8f0; border-radius: 8px;
-            padding: 15px; text-align: left; cursor: pointer; font-weight: 600;
-            color: #475569; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between;
-            font-family: 'Poppins', sans-serif; font-size: 15px;
-        }
-        .ben-btn:hover { background: #f8fafc; border-color: #cbd5e1; transform: translateX(5px); }
-        .ben-btn.active { background: #6366f1; color: #ffffff; border-color: #6366f1; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
-        .ben-btn.active i { color: #ffffff; }
-        .ben-btn i { color: #94a3b8; }
-        
-        .ben-main { flex: 1; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 30px; position: relative; overflow: hidden; }
-        .ben-content { display: none; animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .ben-content.active { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-        .plan-card {
-            background: #ffffff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 20px; text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; transition: transform 0.2s;
-        }
-        .plan-card:hover { transform: translateY(-5px); }
-        .plan-card.current { border-top-width: 6px; border-top-color: #64748b; }
-        .plan-card.prop1 { border-top-width: 6px; border-top-color: #3b82f6; }
-        .plan-card.prop2 { border-top-width: 6px; border-top-color: #f97316; opacity: 0.8; }
-        .plan-card.prop3 { border-top-width: 6px; border-top-color: #10b981; background: #ecfdf5; border-color: #10b981; }
-
-        .plan-card span.title { display: block; font-size: 13px; color: #64748b; margin-bottom: 10px; font-weight:700; text-transform:uppercase; letter-spacing: 0.5px;}
-        .plan-card strong { display: block; font-size: 24px; color: #1e293b; font-family: 'Poppins', sans-serif;}
-        .plan-card .diff { font-size: 14px; font-weight: 700; margin-top: 12px; display:inline-block; padding:4px 10px; border-radius:20px; }
-        .diff.positive { background: #dcfce7; color: #15803d; }
-        .diff.neutral { background: #f1f5f9; color: #64748b; visibility: hidden; }
-
-        /* Charts */
-        .chart-container { display: flex; flex-direction: column; gap: 25px; width: 100%; margin-top: 20px; }
-        .bar { align-items: center; display: flex; gap: 20px; }
-        .bar .label { color: #334155; flex: 0 0 250px; font-weight: 700; text-align: right; font-size: 20px; }
-        .bar .bar-inner { background-color: #e2e8f0; border-radius: 8px; flex-grow: 1; height: 50px; }
-        .bar .bar-fill { align-items: center; border-radius: 8px; color: white; display: flex; font-size: 18px; font-weight: 700; height: 100%; justify-content: flex-end; padding-right: 20px; transition: width 1s ease-out; }
-        .chart-summary { font-style: italic; margin-top: 30px; max-width: 90%; text-align: center; font-size: 20px; }
-
-        /* Timeline Layout */
-        .timeline-layout { align-items: stretch; display: flex; height: stretch; justify-content: space-between; position: relative; width: 100%; margin-top: 50px; }
-        .timeline-layout .timeline-line { background-color: #e2e8f0; height: 4px; left: 0; position: absolute; top: 50%; transform: translateY(-2px); width: 100%; z-index: 0; }
-        .timeline-item { position: relative; text-align: center; width: 30%; }
-        .timeline-item::after { background-color: #fff; border-radius: 50%; border: 4px solid #6366f1; content: ''; height: 24px; left: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 24px; z-index: 1; }
-        .timeline-item .content-wrapper { left: 0; position: absolute; width: 100%; }
-        .timeline-item:nth-child(odd) .content-wrapper { bottom: 50%; margin-bottom: 30px; }
-        .timeline-item:nth-child(even) .content-wrapper { margin-top: 30px; top: 50%; }
-        .timeline-item h3 { color: #6366f1; font-size: 22px; }
-
-        /* Bleed Image Right Layout */
-        .slide-container.bleed-image-layout { align-items: start; display: grid; gap: 50px; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0; }
-        .slide-container.bleed-image-layout > .content-container { padding: 60px 0 60px 60px; }
-        .slide-container.bleed-image-layout > .image-container { height: 100%; overflow: hidden; width: 100%; }
-        .slide-container.bleed-image-layout img.bleed-image-side { border-radius: 0; display: block; height: 720px; object-fit: cover; object-position: center; width: 100%; }
-        .slide-container.bleed-image-layout .bleed-text-side { display: flex; flex-direction: column; justify-content: center; }
-        
-        /* Q&A Layout */
-        .qa-layout { margin: 0 auto; text-align: center; width: 100%; align-self: center; }
-        .qa-layout h2 { font-size: 80px; margin-bottom: 20px; color: #10b981; }
-        .qa-layout p { font-size: 26px; }
-        .qa-layout .contact-info { color: #64748b; font-size: 20px; margin-top: 40px; font-weight: bold; }
-
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8 text-slate-800">
 
-<!-- Slide 1: Title_Slide -->
-<div class="slide-container dark-theme" id="slide1">
-    <div class="content-area">
-        <div class="two-column" style="align-items: center; width: 100%; max-width: 1100px;">
-            <div class="title-layout" style="text-align: left;">
-                <h1>Análise Estratégica</h1>
-                <p class="subtitle" style="color:#10b981; font-weight:bold; margin-left:0;">Migração de Plano de Saúde Corporativo</p>
-                <p class="subtitle" style="margin-left:0; max-width: 100%;">Estudo de viabilidade financeira e assistencial interativo (5 Vidas)</p>
-            </div>
-            <div>
-                <div class="image-wrapper image-cover" style="height: 400px; border: 4px solid #1e293b;">
-                    <img src="" alt="Equipa Médica">
+    <div class="max-w-[1400px] mx-auto">
+        <!-- Header -->
+        <header class="mb-6 text-center md:text-left avoid-break">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Análise de Migração: Divisão por Famílias</h1>
+            <p class="text-slate-500 text-lg">Comparativo detalhado para o grupo de 5 vidas do contrato (Atual x Propostas)</p>
+        </header>
+
+        <!-- Quadro de Ênfase: Diferenças na Rede Credenciada -->
+        <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r shadow-sm avoid-break">
+            <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Ênfase na Principal Diferença: Rede Credenciada
+            </h2>
+            <div class="space-y-4 text-slate-700">
+                <p>
+                    O plano da <strong>SulAmérica (Especial Mais)</strong>, incluído apenas para análise comparativa, possui um perfil muito semelhante aos demais, porém <strong>não recomendamos a troca</strong> para esta opção.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6 mt-4">
+                    <div class="bg-white p-4 rounded border border-slate-200">
+                        <h3 class="font-bold text-slate-900 mb-2">Cenário Atual (Ouro MAX) x Proposta Porto P470</h3>
+                        <p class="text-sm mb-2">A principal diferença entre o plano atual (Ouro MAX) e o novo plano proposto para redução (Porto Seguro P470) é a <strong>retirada da rede São Luiz</strong> no P470. Serão excluídos hospitais como:</p>
+                        <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+                            <li><strong>Hospital São Luiz Itaim:</strong> Referência em alta tecnologia e maternidade.</li>
+                            <li><strong>Hospital São Luiz Anália Franco:</strong> Atendimento completo na Zona Leste.</li>
+                            <li><strong>Hospital São Luiz Morumbi:</strong> Unidade na Zona Sul com pronto-socorro e exames.</li>
+                            <li><strong>Hospital São Luiz Jabaquara:</strong> Unidade na Zona Sul.</li>
+                            <li><strong>Hospital São Luiz São Caetano/Osasco/Alphaville:</strong> Unidades na região metropolitana.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded border border-slate-200">
+                        <h3 class="font-bold text-slate-900 mb-2">Opção Amil S750</h3>
+                        <p class="text-sm mb-2">O plano da Amil (S750) <strong>mantém todos os hospitais da rede São Luiz</strong> listados ao lado, evitando o downgrade de rede.</p>
+                        <p class="text-sm">No entanto, esta opção <strong>retira o Hospital Sírio-Libanês e o Laboratório Alta</strong> da rede de atendimento (que hoje constam no Ouro MAX).</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Slide 2: Image_Right_Text_Left -->
-<div class="slide-container" id="slide2">
-    <h2 class="slide-title">O Cenário Atual</h2>
-    <div class="content-area">
-        <div class="two-column">
-            <div>
-                <h3>O Desafio Financeiro</h3>
-                <p>Atualmente, o grupo (Família Faversani e Família Pavan) encontra-se no plano <strong>Ouro MAX Q-PME da Porto Seguro</strong>.</p>
-                <p>O custo mensal atual atingiu o patamar de <strong>R$ 16.783,27</strong>, o que demanda uma readequação orçamentária urgente, sem abrir mão da qualidade hospitalar que os segurados já estão habituados.</p>
-                <p>O objetivo desta análise é encontrar um ponto de equilíbrio perfeito entre <strong>redução severa de custos</strong> e <strong>manutenção de hospitais premium</strong>.</p>
+        <!-- Tabela Comparativa -->
+        <div class="bg-white rounded-xl overflow-hidden table-shadow border border-slate-200">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1100px]">
+                    <thead>
+                        <tr>
+                            <th class="p-4 border-b border-r border-slate-200 bg-slate-50 w-1/5">
+                                <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Segurado / Papel / Idade</span>
+                            </th>
+                            
+                            <!-- Coluna Cenário Atual (Ouro Max) -->
+                            <th class="p-4 border-b border-r border-slate-200 bg-slate-100/80 w-1/5 relative">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-slate-500"></div>
+                                <span class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Cenário Atual</span>
+                                <span class="block text-lg font-bold text-slate-800">Porto Seguro</span>
+                                <span class="block text-sm font-medium text-slate-600">Ouro MAX Q-PME</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-slate-200 text-slate-700 text-xs font-semibold rounded">Sem Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-slate-500">Reembolso (Consulta): Ouro</span>
+                            </th>
+
+                            <!-- Coluna Porto P470 -->
+                            <th class="p-4 border-b border-r border-slate-200 bg-blue-50/50 w-1/5 relative opacity-90">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                                <span class="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Proposta 1 (Downgrade)</span>
+                                <span class="block text-lg font-bold text-slate-800">Porto Seguro</span>
+                                <span class="block text-sm font-medium text-slate-600">P470 Q (Apartamento)</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">Sem Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-blue-800">Reembolso (Consulta): R$ 249,00</span>
+                            </th>
+
+                            <!-- Coluna SulAmérica -->
+                            <th class="p-4 border-b border-r border-slate-200 bg-orange-50/50 w-1/5 relative opacity-60">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-orange-500"></div>
+                                <span class="block text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Proposta 2 (Não Rec.)</span>
+                                <span class="block text-lg font-bold text-slate-800">SulAmérica</span>
+                                <span class="block text-sm font-medium text-slate-600">Especial Mais (Apt)</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded">Sem Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-orange-800">Reembolso (Consulta): R$ 330,75</span>
+                            </th>
+
+                            <!-- Coluna Amil -->
+                            <th class="p-4 border-b border-slate-200 bg-purple-50/50 w-1/5 relative">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-purple-500"></div>
+                                <span class="block text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">Proposta 3 (Recomendada)</span>
+                                <span class="block text-lg font-bold text-slate-800">Amil</span>
+                                <span class="block text-sm font-medium text-slate-600">S750 R2 QP (Apartamento)</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded">Com Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-purple-800">Reembolso (Consulta): R$ 240,00</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                    <!-- ================= FAMÍLIA 1 ================= -->
+                    <tbody class="divide-y divide-slate-200 avoid-break">
+                        <tr class="family-header border-y-2 border-slate-300">
+                            <td colspan="5" class="p-3 text-slate-800">
+                                <span class="font-bold text-base flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    Família 1: Faversani
+                                </span>
+                            </td>
+                        </tr>
+                        <!-- Lilian -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Lilian Ana Petillo Faversani</span>
+                                <span class="block text-xs text-blue-600 font-medium">Titular</span>
+                                <span class="block text-xs text-slate-500">60 anos (Faixa: 59+)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 4.657,07</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 2.536,60</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-orange-50/10 opacity-60">R$ 4.572,65</td>
+                            <td class="p-3 text-slate-700 bg-purple-50/10 font-medium">R$ 3.371,17</td>
+                        </tr>
+
+                        <!-- Ana Gabriela -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Ana Gabriela P. Faversani Reis</span>
+                                <span class="block text-xs text-slate-500 font-medium">Dependente 1</span>
+                                <span class="block text-xs text-slate-500">34 anos (Faixa: 34 a 38)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 1.633,79</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 919,64</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-orange-50/10 opacity-60">R$ 1.403,04</td>
+                            <td class="p-3 text-slate-700 bg-purple-50/10 font-medium">R$ 1.019,51</td>
+                        </tr>
+
+                        <!-- Guile -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Guile Faversani Altman</span>
+                                <span class="block text-xs text-slate-500 font-medium">Dependente 2</span>
+                                <span class="block text-xs text-slate-500">5 anos (Faixa: 0 a 18)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 788,15</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 506,78</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-orange-50/10 opacity-60">R$ 762,14</td>
+                            <td class="p-3 text-slate-700 bg-purple-50/10 font-medium">R$ 568,85</td>
+                        </tr>
+
+                        <!-- Subtotal Familia 1 -->
+                        <tr class="bg-slate-100/50 border-t-2 border-slate-200 text-sm">
+                            <td class="p-3 border-r border-slate-200 text-right font-bold text-slate-700 uppercase">
+                                Subtotal Família 1 (S/ IOF)
+                            </td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-slate-100">R$ 7.079,01</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-blue-50/50">R$ 3.963,02</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 opacity-60 bg-orange-50/30">R$ 6.737,83</td>
+                            <td class="p-3 font-bold text-slate-800 bg-purple-50/30">R$ 4.959,53</td>
+                        </tr>
+                    </tbody>
+
+                    <!-- ================= FAMÍLIA 2 ================= -->
+                    <tbody class="divide-y divide-slate-200 avoid-break">
+                        <tr class="family-header border-y-2 border-slate-300">
+                            <td colspan="5" class="p-3 text-slate-800">
+                                <span class="font-bold text-base flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    Família 2: Pavan
+                                </span>
+                            </td>
+                        </tr>
+                        <!-- Sonia -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Sonia Maria Villaca Salgado Pavan</span>
+                                <span class="block text-xs text-blue-600 font-medium">Titular</span>
+                                <span class="block text-xs text-slate-500">68 anos (Faixa: 59+)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 4.657,07</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 2.536,60</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-400 bg-orange-50/10 opacity-60">
+                                R$ 4.572,65 <span class="text-xs text-orange-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                            <td class="p-3 text-slate-400 bg-purple-50/10 font-medium">
+                                R$ 3.371,17 <span class="text-xs text-purple-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                        </tr>
+
+                        <!-- Luciano -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Luciano de Oliveira Pavan</span>
+                                <span class="block text-xs text-slate-500 font-medium">Dependente 1</span>
+                                <span class="block text-xs text-slate-500">71 anos (Faixa: 59+)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 4.657,07</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 2.536,60</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-400 bg-orange-50/10 opacity-60">
+                                R$ 4.572,65 <span class="text-xs text-orange-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                            <td class="p-3 text-slate-400 bg-purple-50/10 font-medium">
+                                R$ 3.371,17 <span class="text-xs text-purple-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                        </tr>
+
+                        <!-- Subtotal Familia 2 -->
+                        <tr class="bg-slate-100/50 border-t-2 border-slate-200 text-sm">
+                            <td class="p-3 border-r border-slate-200 text-right font-bold text-slate-700 uppercase">
+                                Subtotal Família 2 (S/ IOF)
+                            </td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-slate-100">R$ 9.314,14</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-blue-50/50">R$ 5.073,20</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-500 opacity-60 bg-orange-50/30">R$ 9.145,30 <span class="text-orange-500">*</span></td>
+                            <td class="p-3 font-bold text-slate-500 bg-purple-50/30">R$ 6.742,34 <span class="text-purple-500">*</span></td>
+                        </tr>
+                    </tbody>
+
+                    <!-- ================= TOTAIS GERAIS ================= -->
+                    <tbody class="divide-y divide-slate-200 border-t-4 border-slate-300 avoid-break">
+                        <!-- Subtotal -->
+                        <tr class="bg-slate-50">
+                            <td class="p-4 border-r border-slate-200 text-right font-semibold text-slate-600">
+                                Total Geral (Sem IOF) das 5 vidas
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-slate-900 bg-slate-200/50">R$ 16.393,15</td>
+                            <td class="p-4 border-r border-slate-200 font-semibold text-slate-800">R$ 9.036,22</td>
+                            <td class="p-4 border-r border-slate-200 font-semibold text-slate-800 opacity-60">R$ 15.883,13 <span class="text-orange-500">*</span></td>
+                            <td class="p-4 font-semibold text-slate-800">R$ 11.701,87 <span class="text-purple-500">*</span></td>
+                        </tr>
+
+                        <!-- IOF -->
+                        <tr class="bg-slate-50">
+                            <td class="p-3 border-r border-slate-200 text-right font-medium text-slate-500 text-sm">
+                                Encargos (IOF)
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-600 font-medium text-sm bg-slate-200/30">R$ 390,12</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-500 text-sm">R$ 215,06</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-500 text-sm opacity-60">R$ 378,01</td>
+                            <td class="p-3 text-slate-500 text-sm">Embutido / Isento</td>
+                        </tr>
+
+                        <!-- TOTAL FINAL -->
+                        <tr>
+                            <td class="p-4 border-r border-slate-200 text-right font-bold text-slate-800 text-lg uppercase">
+                                Investimento Final (Mês)
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-slate-900 text-2xl bg-slate-200">
+                                R$ 16.783,27
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-blue-700 text-2xl bg-blue-50/50">
+                                R$ 9.251,28
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-orange-700 text-2xl bg-orange-50/50 opacity-60">
+                                R$ 16.261,14 <span class="text-lg text-orange-500">*</span>
+                            </td>
+                            <td class="p-4 font-bold text-purple-700 text-2xl bg-purple-50/50">
+                                R$ 11.701,87 <span class="text-lg text-purple-500">*</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div>
-                <div class="image-wrapper">
-                    <img src="http://googleusercontent.com/image_collection/image_retrieval/2380247845098113693" class="image-cover" alt="Consultoria corporativa em saúde">
+        </div>
+
+        <!-- Estratégia, Avisos e Metodologia em Bloco Único - COM QUEBRA DE PÁGINA AQUI -->
+        <div class="mt-6 flex flex-col lg:flex-row gap-6 page-break-before avoid-break">
+            <!-- Avisos e Metodologia -->
+            <div class="flex-1 bg-slate-50 border border-slate-200 p-5 rounded-lg shadow-sm text-sm text-slate-700">
+                <h3 class="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Avisos e Metodologia de Cálculo:
+                </h3>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Cenário Atual (Porto Ouro MAX):</strong> Extraído exatamente da fatura de <strong>Abril/2026</strong>.</li>
+                    <li><strong>Proposta 1 (Porto P470):</strong> Subtotais extraídos da Tabela Geral de Prêmios do plano <strong>P470 Q Sem Coparticipação</strong> (proposta de redução).</li>
+                    <li><strong>Coparticipação:</strong> Porto Seguro atual e propostas (Porto e SulAmérica) são planos <strong>sem coparticipação</strong>. O plano cotado da Amil (S750 R2 QP) possui <strong>coparticipação parcial, apenas para terapias</strong>, o que impacta na redução fixa da mensalidade.</li>
+                    <li><strong>Odontológico:</strong> A SulAmérica ofereceu isenção (R$ 0,00) para o plano odonto. A Amil ofereceu isenção nos 12 primeiros meses (R$ 43,50 totais após esse período).</li>
+                </ul>
+            </div>
+
+            <!-- Estratégia Operacional e Portabilidade -->
+            <div class="flex-1 bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-r shadow-sm">
+                <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                    Estratégia Operacional: Portabilidade e Divisão de Contratos
+                </h2>
+                <div class="space-y-3 text-slate-700 text-sm">
+                    <p>
+                        <strong>Sobre a Família Pavan:</strong> O contrato será feito via <strong>portabilidade</strong>. Por conta da idade, essa ação é fundamental para manter o aproveitamento de carências gerais do contrato anterior e não afetar tratamentos existentes.
+                    </p>
+                    <p>
+                        <strong>Abertura do Contrato:</strong> Isso não irá afetar o plano atual da filha. Sendo assim, será usada a inclusão dela no plano no primeiro mês especificamente para abrir o contrato de forma segura.
+                    </p>
+                    <p>
+                        <strong>Gestão de CNPJ:</strong> De antemão, seria feito o mesmo cenário utilizando o CNPJ da <strong>LEXI</strong>. Contudo, caso queiram desmembrar o contrato da Anima, o cenário ideal é usar o <strong>CNPJ do Luciano</strong> e fazer essa movimentação por lá.
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Slide 3: Interactive Family Profiles -->
-<div class="slide-container" id="slide3">
-    <h2 class="slide-title">Perfil do Grupo <span style="font-size:20px; color:#94a3b8; font-weight:normal;">(Passe o rato para expandir)</span></h2>
-    <div class="content-area">
-        <div class="two-column">
-            <!-- Family 1 Card -->
-            <div class="family-card">
-                <img src="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid #6366f1;" alt="Família Faversani">
-                <h3>Família 1: Faversani</h3>
-                <p>Contempla 3 vidas, com necessidade de atendimento de excelência, especialmente para maternidade e pediatria.</p>
-                <p class="instruction">Passe o rato para ver os membros <i class="fa-solid fa-chevron-down"></i></p>
+        <!-- Análise Geral e Veredito -->
+        <div class="mt-6 bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r shadow-sm avoid-break mb-10">
+            <h2 class="text-2xl font-bold text-emerald-900 mb-4 flex items-center gap-2">
+                <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Análise Geral e Veredito: Por que a Amil é a melhor escolha?
+            </h2>
+            <div class="space-y-4 text-slate-700">
+                <p class="text-lg">Após a análise comparativa incluindo o <strong>verdadeiro custo atual (R$ 16.783,27)</strong>, a opção <strong>Amil S750 R2 QP</strong> consagra-se como a recomendação mais inteligente, financeira e assistencialmente para o grupo.</p>
                 
-                <div class="family-details">
-                    <ul>
-                        <li><strong>Lilian (Titular):</strong> 60 anos <span style="color:#94a3b8;">(Faixa 59+)</span></li>
-                        <li><strong>Ana Gabriela (Dependente):</strong> 34 anos <span style="color:#94a3b8;">(Faixa 34 a 38)</span></li>
-                        <li><strong>Guile (Dependente):</strong> 5 anos <span style="color:#94a3b8;">(Faixa 0 a 18)</span></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Family 2 Card -->
-            <div class="family-card">
-                <img src="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid #6366f1;" alt="Família Pavan">
-                <h3>Família 2: Pavan</h3>
-                <p>Contempla 2 vidas na faixa etária sénior. Exige máxima cautela (portabilidade) para não afetar tratamentos em curso.</p>
-                <p class="instruction">Passe o rato para ver os membros <i class="fa-solid fa-chevron-down"></i></p>
-
-                <div class="family-details">
-                    <ul>
-                        <li><strong>Sonia (Titular):</strong> 68 anos <span style="color:#94a3b8;">(Faixa 59+)</span></li>
-                        <li><strong>Luciano (Dependente):</strong> 71 anos <span style="color:#94a3b8;">(Faixa 59+)</span></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 4: Tiled_Text_With_Icons -->
-<div class="slide-container" id="slide4">
-    <h2 class="slide-title">As Três Propostas</h2>
-    <div class="content-area">
-        <div class="tiled-content">
-            <div class="tile">
-                <img src="" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;" alt="Hospital Padrão">
-                <h3 style="color:#3b82f6;">Porto P470</h3>
-                <p>Reduz agressivamente o custo para R$ 9,2 mil, mas causa um sério downgrade de rede, cortando toda a rede São Luiz.</p>
-            </div>
-            <div class="tile">
-                <img src="" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;" alt="Hospital Premium">
-                <h3 style="color:#f97316;">SulAmérica</h3>
-                <p>Plano Especial Mais. Mantém a rede premium, mas o valor salta para mais de R$ 16,2 mil (inviável financeiramente).</p>
-            </div>
-            <div class="tile" style="border: 2px solid #10b981; background-color:#ecfdf5;">
-                <img src="" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;" alt="Equilíbrio Ideal">
-                <h3 style="color:#10b981;">Amil S750</h3>
-                <p>A solução ideal. Mensalidade de R$ 11,7 mil, mantendo a rede São Luiz e com coparticipação inteligente (só terapias).</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 5: Bar_Chart_For_Comparisons -->
-<div class="slide-container" id="slide5">
-    <h2 class="slide-title">Comparativo de Custos Mensais</h2>
-    <div class="content-area">
-        <div class="image-wrapper" style="height: 180px; width: 100%; margin-bottom: 10px;">
-            <img src="" class="image-cover" alt="Análise Financeira">
-        </div>
-        <div class="chart-container">
-            <div class="bar">
-                <div class="label">Cenário Atual (Ouro MAX)</div>
-                <div class="bar-inner"><div class="bar-fill" style="width: 100%; background: linear-gradient(90deg, #94a3b8, #475569);">R$ 16.783</div></div>
-            </div>
-            <div class="bar">
-                <div class="label">Opção 1: SulAmérica</div>
-                <div class="bar-inner"><div class="bar-fill" style="width: 96%; background: linear-gradient(90deg, #fdba74, #f97316);">R$ 16.261</div></div>
-            </div>
-            <div class="bar">
-                <div class="label">Opção 2: Amil S750</div>
-                <div class="bar-inner"><div class="bar-fill" style="width: 70%; background: linear-gradient(90deg, #34d399, #10b981);">R$ 11.701</div></div>
-            </div>
-            <div class="bar">
-                <div class="label">Opção 3: Porto P470</div>
-                <div class="bar-inner"><div class="bar-fill" style="width: 55%; background: linear-gradient(90deg, #93c5fd, #3b82f6);">R$ 9.251</div></div>
-            </div>
-        </div>
-        <p class="chart-summary">A Amil (barra verde) oferece a redução financeira desejada sem cair na defasagem de rede que a Porto P470 causaria.</p>
-    </div>
-</div>
-
-<!-- Slide 6: Interactive Tabbed Financial Table -->
-<div class="slide-container" id="slide6">
-    <h2 class="slide-title" style="display: flex; align-items: center; gap: 20px;">
-        Detalhamento Financeiro Interativo
-        <img src="" style="height: 60px; border-radius: 8px; object-fit: cover; width: 150px;" alt="Documentos Financeiros">
-    </h2>
-    <div class="content-area">
-        
-        <div class="interactive-tabs-container">
-            <!-- Controlos de Abas -->
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="openTab(event, 'tab-all')">
-                    <i class="fa-solid fa-layer-group"></i> Visão Consolidada
-                </button>
-                <button class="tab-btn" onclick="openTab(event, 'tab-beneficiarios')">
-                    <i class="fa-solid fa-user-check"></i> Análise por Beneficiário
-                </button>
-            </div>
-
-            <!-- Aba 1: Visão Consolidada -->
-            <div id="tab-all" class="tab-content active">
-                <div class="table-layout">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Subgrupos</th>
-                                <th>Ouro MAX <span class="sub-text">(Atual)</span></th>
-                                <th>Porto P470 <span class="sub-text">(Proposta 1)</span></th>
-                                <th class="not-rec">SulAmérica <span class="sub-text">(Proposta 2)</span></th>
-                                <th class="highlight-col">Amil S750 <span class="sub-text">(Recomendada)</span></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="row-header">Família Faversani <span class="sub-text">3 vidas</span></td>
-                                <td>R$ 7.079,01</td>
-                                <td>R$ 3.963,02</td>
-                                <td class="not-rec">R$ 6.737,83</td>
-                                <td class="highlight-col font-bold">R$ 4.959,53</td>
-                            </tr>
-                            <tr>
-                                <td class="row-header">Família Pavan <span class="sub-text">2 vidas</span></td>
-                                <td>R$ 9.314,14</td>
-                                <td>R$ 5.073,20</td>
-                                <td class="not-rec">R$ 9.145,30*</td>
-                                <td class="highlight-col font-bold">R$ 6.742,34*</td>
-                            </tr>
-                            <tr>
-                                <td class="row-header">IOF / Encargos <span class="sub-text">Estimativa</span></td>
-                                <td>R$ 390,12</td>
-                                <td>R$ 215,06</td>
-                                <td class="not-rec">R$ 378,01*</td>
-                                <td class="highlight-col font-bold">Isento / Embutido</td>
-                            </tr>
-                            <tr style="border-top: 2px solid #cbd5e1;">
-                                <td class="row-header" style="font-size: 18px;">TOTAL GERAL (Mês)</td>
-                                <td style="font-weight: bold; font-size: 18px;">R$ 16.783,27</td>
-                                <td style="font-weight: bold; font-size: 18px;">R$ 9.251,28</td>
-                                <td class="not-rec" style="font-weight: bold; font-size: 18px;">R$ 16.261,14*</td>
-                                <td class="highlight-col" style="font-weight: bold; font-size: 22px;">R$ 11.701,87</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Aba 2: Novo Painel por Beneficiário -->
-            <div id="tab-beneficiarios" class="tab-content">
-                <div class="ben-layout">
-                    <!-- Menu lateral de Beneficiários -->
-                    <div class="ben-sidebar">
-                        <button class="ben-btn active" onclick="showBeneficiary(event, 'ben-lilian')">
-                            Lilian (60) <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                        <button class="ben-btn" onclick="showBeneficiary(event, 'ben-ana')">
-                            Ana Gabriela (34) <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                        <button class="ben-btn" onclick="showBeneficiary(event, 'ben-guile')">
-                            Guile (5) <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                        <button class="ben-btn" onclick="showBeneficiary(event, 'ben-sonia')">
-                            Sonia (68) <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                        <button class="ben-btn" onclick="showBeneficiary(event, 'ben-luciano')">
-                            Luciano (71) <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-
-                    <!-- Conteúdo do painel -->
-                    <div class="ben-main">
-                        <!-- Beneficiário: Lilian -->
-                        <div id="ben-lilian" class="ben-content active">
-                            <h3 style="font-size: 28px; color: #1e293b; margin-bottom: 5px;">Lilian Ana Petillo Faversani</h3>
-                            <p style="color: #64748b; margin-bottom: 25px;"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Titular | 60 anos (Faixa 59+)</p>
-                            
-                            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
-                                <div class="plan-card current">
-                                    <span class="title">Atual (Ouro MAX)</span>
-                                    <strong>R$ 4.657</strong>
-                                    <span class="diff neutral">-</span>
-                                </div>
-                                <div class="plan-card prop1">
-                                    <span class="title">Proposta 1 (P470)</span>
-                                    <strong>R$ 2.536</strong>
-                                    <span class="diff positive">Poupa R$ 2.120</span>
-                                </div>
-                                <div class="plan-card prop2">
-                                    <span class="title">Proposta 2 (SulAm)</span>
-                                    <strong>R$ 4.572</strong>
-                                    <span class="diff positive">Poupa R$ 84</span>
-                                </div>
-                                <div class="plan-card prop3">
-                                    <span class="title">Proposta 3 (Amil)</span>
-                                    <strong style="color:#047857;">R$ 3.371</strong>
-                                    <span class="diff positive" style="background:#d1fae5; color:#065f46;">Poupa R$ 1.285</span>
-                                </div>
-                            </div>
-                            <div style="margin-top:25px; padding:15px; background:#f1f5f9; border-radius:8px; border-left:4px solid #6366f1;">
-                                <p style="margin:0; font-size:16px;"><strong>Análise Assistencial:</strong> A opção recomendada (Amil S750) garante uma poupança mensal robusta de <strong>R$ 1.285,90</strong> apenas nesta vida, mantendo a cobertura premium de hospitais como a linha São Luiz.</p>
-                            </div>
-                        </div>
-
-                        <!-- Beneficiário: Ana Gabriela -->
-                        <div id="ben-ana" class="ben-content">
-                            <h3 style="font-size: 28px; color: #1e293b; margin-bottom: 5px;">Ana Gabriela P. Faversani Reis</h3>
-                            <p style="color: #64748b; margin-bottom: 25px;"><i class="fa-solid fa-user" style="color:#64748b;"></i> Dependente 1 | 34 anos (Faixa 34 a 38)</p>
-                            
-                            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
-                                <div class="plan-card current">
-                                    <span class="title">Atual (Ouro MAX)</span>
-                                    <strong>R$ 1.633</strong>
-                                    <span class="diff neutral">-</span>
-                                </div>
-                                <div class="plan-card prop1">
-                                    <span class="title">Proposta 1 (P470)</span>
-                                    <strong>R$ 919</strong>
-                                    <span class="diff positive">Poupa R$ 714</span>
-                                </div>
-                                <div class="plan-card prop2">
-                                    <span class="title">Proposta 2 (SulAm)</span>
-                                    <strong>R$ 1.403</strong>
-                                    <span class="diff positive">Poupa R$ 230</span>
-                                </div>
-                                <div class="plan-card prop3">
-                                    <span class="title">Proposta 3 (Amil)</span>
-                                    <strong style="color:#047857;">R$ 1.019</strong>
-                                    <span class="diff positive" style="background:#d1fae5; color:#065f46;">Poupa R$ 614</span>
-                                </div>
-                            </div>
-                            <div style="margin-top:25px; padding:15px; background:#f1f5f9; border-radius:8px; border-left:4px solid #6366f1;">
-                                <p style="margin:0; font-size:16px;"><strong>Análise Assistencial:</strong> Sendo dependente, a migração para Amil S750 reduz os custos em <strong>R$ 614,28</strong> mantendo o padrão assistencial elevado necessário para exames e urgências.</p>
-                            </div>
-                        </div>
-
-                        <!-- Beneficiário: Guile -->
-                        <div id="ben-guile" class="ben-content">
-                            <h3 style="font-size: 28px; color: #1e293b; margin-bottom: 5px;">Guile Faversani Altman</h3>
-                            <p style="color: #64748b; margin-bottom: 25px;"><i class="fa-solid fa-child-reaching" style="color:#3b82f6;"></i> Dependente 2 | 5 anos (Faixa 0 a 18)</p>
-                            
-                            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
-                                <div class="plan-card current">
-                                    <span class="title">Atual (Ouro MAX)</span>
-                                    <strong>R$ 788</strong>
-                                    <span class="diff neutral">-</span>
-                                </div>
-                                <div class="plan-card prop1">
-                                    <span class="title">Proposta 1 (P470)</span>
-                                    <strong>R$ 506</strong>
-                                    <span class="diff positive">Poupa R$ 281</span>
-                                </div>
-                                <div class="plan-card prop2">
-                                    <span class="title">Proposta 2 (SulAm)</span>
-                                    <strong>R$ 762</strong>
-                                    <span class="diff positive">Poupa R$ 26</span>
-                                </div>
-                                <div class="plan-card prop3">
-                                    <span class="title">Proposta 3 (Amil)</span>
-                                    <strong style="color:#047857;">R$ 568</strong>
-                                    <span class="diff positive" style="background:#d1fae5; color:#065f46;">Poupa R$ 219</span>
-                                </div>
-                            </div>
-                            <div style="margin-top:25px; padding:15px; background:#f1f5f9; border-radius:8px; border-left:4px solid #6366f1;">
-                                <p style="margin:0; font-size:16px;"><strong>Análise Assistencial:</strong> Poupança de <strong>R$ 219,30</strong>. É crucial manter acesso aos excelentes prontos-socorros pediátricos que a Amil S750 oferece, especialmente através da rede São Luiz.</p>
-                            </div>
-                        </div>
-
-                        <!-- Beneficiário: Sonia -->
-                        <div id="ben-sonia" class="ben-content">
-                            <h3 style="font-size: 28px; color: #1e293b; margin-bottom: 5px;">Sonia Maria Villaca Salgado Pavan</h3>
-                            <p style="color: #64748b; margin-bottom: 25px;"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Titular | 68 anos (Faixa 59+)</p>
-                            
-                            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
-                                <div class="plan-card current">
-                                    <span class="title">Atual (Ouro MAX)</span>
-                                    <strong>R$ 4.657</strong>
-                                    <span class="diff neutral">-</span>
-                                </div>
-                                <div class="plan-card prop1">
-                                    <span class="title">Proposta 1 (P470)</span>
-                                    <strong>R$ 2.536</strong>
-                                    <span class="diff positive">Poupa R$ 2.120</span>
-                                </div>
-                                <div class="plan-card prop2">
-                                    <span class="title">Proposta 2 (SulAm)</span>
-                                    <strong>R$ 4.572</strong>
-                                    <span class="diff positive">Poupa R$ 84</span>
-                                </div>
-                                <div class="plan-card prop3">
-                                    <span class="title">Proposta 3 (Amil)</span>
-                                    <strong style="color:#047857;">R$ 3.371</strong>
-                                    <span class="diff positive" style="background:#d1fae5; color:#065f46;">Poupa R$ 1.285</span>
-                                </div>
-                            </div>
-                            <div style="margin-top:25px; padding:15px; background:#f1f5f9; border-radius:8px; border-left:4px solid #6366f1;">
-                                <p style="margin:0; font-size:16px;"><strong>Análise Assistencial:</strong> Titular sénior. A redução de <strong>R$ 1.285,90</strong> alivia significativamente o custo da família. <em>Nota: É imprescindível realizar a portabilidade atenta para assegurar todas as carências em curso.</em></p>
-                            </div>
-                        </div>
-
-                        <!-- Beneficiário: Luciano -->
-                        <div id="ben-luciano" class="ben-content">
-                            <h3 style="font-size: 28px; color: #1e293b; margin-bottom: 5px;">Luciano de Oliveira Pavan</h3>
-                            <p style="color: #64748b; margin-bottom: 25px;"><i class="fa-solid fa-user" style="color:#64748b;"></i> Dependente 1 | 71 anos (Faixa 59+)</p>
-                            
-                            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
-                                <div class="plan-card current">
-                                    <span class="title">Atual (Ouro MAX)</span>
-                                    <strong>R$ 4.657</strong>
-                                    <span class="diff neutral">-</span>
-                                </div>
-                                <div class="plan-card prop1">
-                                    <span class="title">Proposta 1 (P470)</span>
-                                    <strong>R$ 2.536</strong>
-                                    <span class="diff positive">Poupa R$ 2.120</span>
-                                </div>
-                                <div class="plan-card prop2">
-                                    <span class="title">Proposta 2 (SulAm)</span>
-                                    <strong>R$ 4.572</strong>
-                                    <span class="diff positive">Poupa R$ 84</span>
-                                </div>
-                                <div class="plan-card prop3">
-                                    <span class="title">Proposta 3 (Amil)</span>
-                                    <strong style="color:#047857;">R$ 3.371</strong>
-                                    <span class="diff positive" style="background:#d1fae5; color:#065f46;">Poupa R$ 1.285</span>
-                                </div>
-                            </div>
-                            <div style="margin-top:25px; padding:15px; background:#f1f5f9; border-radius:8px; border-left:4px solid #6366f1;">
-                                <p style="margin:0; font-size:16px;"><strong>Análise Assistencial:</strong> Segue o mesmo racional de economia sénior (<strong>R$ 1.285,90</strong>). Caso optem pelo desmembramento do contrato (da Anima), o CNPJ ideal para alojar a apólice será o dele.</p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-        </div> <!-- End Tabs Container -->
-    </div>
-</div>
-
-<!-- Slide 7: Highlighted_Numbers -->
-<div class="slide-container" id="slide7">
-    <h2 class="slide-title">O Impacto da Escolha</h2>
-    <div class="content-area">
-        <div class="two-column highlight-numbers-layout" style="align-items: center;">
-            <div>
-                <div class="number">R$ 60k</div>
-                <div class="number-label">Economia Anual Projetada</div>
-            </div>
-            <div>
-                <h3>Redução de R$ 5.081,40 por Mês</h3>
-                <p>Mudar do atual Ouro MAX para o plano <strong>Amil S750</strong> gera uma economia massiva para a empresa.</p>
-                <p>Ao longo de 12 meses, essa diferença injeta quase R$ 61.000,00 de volta no fluxo de caixa, pagando praticamente 5 meses integrais do novo plano.</p>
-                <div class="image-wrapper" style="height: 220px; margin-top: 30px;">
-                    <img src="" class="image-cover" alt="Poupança e Finanças">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 8: Image_Right_Text_Left -->
-<div class="slide-container" id="slide8">
-    <h2 class="slide-title">Manutenção de Rede Premium</h2>
-    <div class="content-area">
-        <div class="two-column">
-            <div>
-                <ul style="list-style: none; padding:0; margin:0;">
-                    <li style="margin-bottom:20px;">
-                        <strong style="color:#ef4444; font-size:20px;">O Risco da Porto P470:</strong><br>
-                        Gera economia, mas exige o sacrifício de toda a <strong>Rede São Luiz</strong> (Itaim, Anália Franco, Morumbi).
-                    </li>
-                    <li style="margin-bottom:20px;">
-                        <strong style="color:#10b981; font-size:20px;">O Diferencial da Amil S750:</strong><br>
-                        Mantém o acesso irrestrito aos hospitais da Rede São Luiz, fundamentais para a tranquilidade das famílias em momentos de alta complexidade e maternidade.
+                <ul class="list-disc pl-5 space-y-3 mt-2">
+                    <li>
+                        <strong class="text-emerald-800">Economia Massiva (R$ 5.081,40 de redução mensal):</strong> 
+                        Mudar do atual Ouro MAX para a Amil representa uma economia anual na ordem de <strong>R$ 60.976,80</strong> para a empresa.
                     </li>
                     <li>
-                        <strong style="color:#64748b; font-size:20px;">O que muda na Amil:</strong><br>
-                        A rede credenciada deixa de contemplar o Hospital Sírio-Libanês e o Laboratório Alta, uma troca inteligente frente à economia gerada.
+                        <strong class="text-emerald-800">Preservação da Rede Premium (Hospital São Luiz):</strong> 
+                        Reduzir os custos aderindo à proposta 1 (Porto P470) geraria um grande retrocesso na qualidade hospitalar, removendo hospitais de altíssimo padrão. A Amil permite a economia enquanto garante a <strong>manutenção de toda a rede São Luiz</strong>, essencial para emergências, cirurgias e maternidade.
+                    </li>
+                    <li>
+                        <strong class="text-emerald-800">A inviabilidade da SulAmérica:</strong> 
+                        A opção da SulAmérica, que manteria o mesmo nível de atendimento da Amil, não traz alívio financeiro algum. Seu custo (R$ 16.261,14) é praticamente idêntico ao altíssimo valor que a empresa já paga hoje.
+                    </li>
+                    <li>
+                        <strong class="text-emerald-800">Coparticipação Inteligente e Segura:</strong> 
+                        Embora a Amil possua coparticipação (diferente da Porto atual), ela incide <strong>apenas sobre terapias</strong>. Isso significa que é perfeitamente previsível. Grandes riscos e altos custos, como internações, cirurgias e passagens em pronto-socorro, <strong>não possuem nenhuma cobrança extra</strong>.
                     </li>
                 </ul>
-            </div>
-            <div>
-                <div class="image-wrapper">
-                    <img src="http://googleusercontent.com/image_collection/image_retrieval/12215545632361093560" class="image-cover" alt="Fachada de hospital moderno de alta tecnologia">
+
+                <div class="mt-6 p-5 bg-emerald-100/60 rounded-lg border border-emerald-300">
+                    <p class="text-xl text-emerald-900">
+                        <strong>Conclusão Final:</strong> A <strong class="text-emerald-700">Proposta 3 (Amil S750)</strong> entrega o "melhor dos mundos". Ela foge da mensalidade proibitiva do atual Ouro MAX, evita o rebaixamento doloroso da rede credenciada do P470 e instaura um modelo de coparticipação focado apenas em terapias, protegendo a família financeiramente de grandes eventos hospitalares.
+                    </p>
                 </div>
             </div>
         </div>
+
     </div>
-</div>
-
-<!-- Slide 9: Styled_Bullet_Points -->
-<div class="slide-container" id="slide9">
-    <h2 class="slide-title">Estratégia Operacional</h2>
-    <div class="content-area">
-        <div class="two-column" style="align-items: center;">
-            <div class="bullet-list">
-                <ul>
-                    <li>
-                        <i class="fa-solid fa-file-contract"></i>
-                        <strong>Portabilidade Estratégica (Família Pavan):</strong> 
-                        Devido à faixa etária (59+), a portabilidade é rigorosamente essencial. Isso garante o aproveitamento total das carências do contrato Ouro MAX, blindando eventuais tratamentos em andamento.
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-user-plus"></i>
-                        <strong>Abertura Segura de Contrato:</strong> 
-                        Para iniciar o contrato sem riscos operacionais, usaremos a inclusão da filha no primeiro mês. Esse movimento ativa o plano de imediato sem afetar a vigência e a segurança das demais vidas em transição.
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-building"></i>
-                        <strong>Gestão de CNPJ (LEXI x Luciano):</strong> 
-                        A modelagem padrão utiliza o CNPJ da LEXI. Porém, caso haja a intenção estratégica de desmembrar o contrato atual da Anima, faremos a movimentação diretamente via CNPJ do Sr. Luciano.
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <div class="image-wrapper" style="height: 400px;">
-                    <img src="" class="image-cover" alt="Estratégia Operacional">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 10: Bleed_Image_Right -->
-<div class="slide-container bleed-image-layout" id="slide10">
-    <div class="content-container">
-        <h2 class="slide-title">Veredito Final</h2>
-        <div class="content-area">
-            <div class="bleed-text-side">
-                <h3 style="color:#10b981;">A Escolha Certa: Amil S750</h3>
-                <p>Evita-se o rebaixamento doloroso da rede credenciada proposto pela Porto P470 e foge-se da mensalidade proibitiva da SulAmérica.</p>
-                <p>A Amil oferece uma "ponte" perfeita: entrega o padrão premium desejado (com Rede São Luiz e reembolso de R$ 240,00) por um valor quase 30% menor que o cenário atual.</p>
-                <p>O modelo de coparticipação da Amil é focado apenas em terapias, protegendo a família financeiramente de internações e grandes cirurgias.</p>
-            </div>
-        </div>
-    </div>
-    <div class="image-container">
-        <img class="bleed-image-side" src="http://googleusercontent.com/image_collection/image_retrieval/13357887901583647960" alt="Reunião de negócios com aperto de mãos">
-    </div>
-</div>
-
-<!-- Slide 11: Timeline -->
-<div class="slide-container" id="slide11">
-    <h2 class="slide-title">Próximos Passos</h2>
-    <div class="content-area">
-        <div class="image-wrapper" style="height: 180px; width: 100%; margin-bottom: 40px;">
-            <img src="" class="image-cover" alt="Próximos Passos e Calendário">
-        </div>
-        <div class="timeline-layout">
-            <div class="timeline-line"></div>
-            <div class="timeline-item">
-                <div class="content-wrapper">
-                    <h3>1. Validação</h3>
-                    <p>Aprovação do cenário Amil S750 e definição do CNPJ âncora.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="content-wrapper">
-                    <h3>2. Abertura</h3>
-                    <p>Inclusão da vida inicial para ativação do novo contrato no sistema.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="content-wrapper">
-                    <h3>3. Portabilidade</h3>
-                    <p>Tramitação documental para isenção de carências da Família Pavan.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="content-wrapper">
-                    <h3>4. Finalização</h3>
-                    <p>Migração concluída com sucesso e cancelamento do plano anterior.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 12: Q&A -->
-<div class="slide-container dark-theme" id="slide12">
-    <div class="qa-layout">
-        <img src="" style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover; margin: 0 auto 30px; display: block; border: 4px solid #10b981;" alt="Apoio ao Cliente">
-        <h2>Dúvidas?</h2>
-        <p style="color:#f8fafc;">A decisão está em suas mãos. Estamos prontos para iniciar o processo.</p>
-        <div class="contact-info" style="color:#10b981;">
-            Aprovação e Início de Implantação
-        </div>
-    </div>
-</div>
-
-<!-- Scripts for Interactivity -->
-<script>
-    // Gestão de abas principais (Visão Consolidada x Por Beneficiário)
-    function openTab(evt, tabId) {
-        var tabcontent = document.getElementsByClassName("tab-content");
-        for (var i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-            tabcontent[i].classList.remove("active");
-        }
-
-        var tablinks = document.getElementsByClassName("tab-btn");
-        for (var i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-
-        document.getElementById(tabId).style.display = "block";
-        setTimeout(function() {
-            document.getElementById(tabId).classList.add("active");
-        }, 10);
-        
-        evt.currentTarget.className += " active";
-    }
-
-    // Gestão da navegação interna (Menu Lateral de Beneficiários)
-    function showBeneficiary(evt, benId) {
-        var contents = document.getElementsByClassName("ben-content");
-        for (var i = 0; i < contents.length; i++) {
-            contents[i].classList.remove("active");
-        }
-        
-        var btns = document.getElementsByClassName("ben-btn");
-        for (var i = 0; i < btns.length; i++) {
-            btns[i].classList.remove("active");
-        }
-        
-        document.getElementById(benId).classList.add("active");
-        evt.currentTarget.classList.add("active");
-    }
-</script>
 
 </body>
 </html>
