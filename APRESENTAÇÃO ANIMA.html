@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparativo de Plano de Saúde - Divisão por Famílias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .table-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .family-header {
+            background: linear-gradient(90deg, #f1f5f9 0%, #ffffff 100%);
+        }
+
+        /* Regras específicas para impressão/salvar em PDF */
+        @media print {
+            @page { size: landscape; } /* Paisagem para caber mais colunas */
+            body {
+                background-color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 0.85rem;
+            }
+            
+            .avoid-break {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .page-break-before {
+                page-break-before: always;
+                break-before: page;
+            }
+
+            thead { display: table-header-group; }
+            tr { page-break-inside: avoid; break-inside: avoid; }
+
+            .max-w-6xl {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .table-shadow {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 text-slate-800">
+
+    <div class="max-w-[1400px] mx-auto">
+        <!-- Header -->
+        <header class="mb-6 text-center md:text-left avoid-break">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Análise de Migração: Divisão por Famílias</h1>
+            <p class="text-slate-500 text-lg">Comparativo detalhado para o grupo de 5 vidas do contrato (Atual x Propostas)</p>
+        </header>
+
+        <!-- Quadro de Ênfase: Diferenças na Rede Credenciada -->
+        <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r shadow-sm avoid-break">
+            <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Ênfase na Principal Diferença: Rede Credenciada
+            </h2>
+            <div class="space-y-4 text-slate-700">
+                <p>
+                    O plano da <strong>SulAmérica (Especial Mais)</strong>, incluído apenas para análise comparativa, possui um perfil muito semelhante aos demais, porém <strong>não recomendamos a troca</strong> para esta opção.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6 mt-4">
+                    <div class="bg-white p-4 rounded border border-slate-200">
+                        <h3 class="font-bold text-slate-900 mb-2">Cenário Atual (Ouro MAX) x Proposta Porto P470</h3>
+                        <p class="text-sm mb-2">A principal diferença entre o plano atual (Ouro MAX) e o novo plano proposto para redução (Porto Seguro P470) é a <strong>retirada da rede São Luiz</strong> no P470. Serão excluídos hospitais como:</p>
+                        <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+                            <li><strong>Hospital São Luiz Itaim:</strong> Referência em alta tecnologia e maternidade.</li>
+                            <li><strong>Hospital São Luiz Anália Franco:</strong> Atendimento completo na Zona Leste.</li>
+                            <li><strong>Hospital São Luiz Morumbi:</strong> Unidade na Zona Sul com pronto-socorro e exames.</li>
+                            <li><strong>Hospital São Luiz Jabaquara:</strong> Unidade na Zona Sul.</li>
+                            <li><strong>Hospital São Luiz São Caetano/Osasco/Alphaville:</strong> Unidades na região metropolitana.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded border border-slate-200">
+                        <h3 class="font-bold text-slate-900 mb-2">Opção Amil S750</h3>
+                        <p class="text-sm mb-2">O plano da Amil (S750) <strong>mantém todos os hospitais da rede São Luiz</strong> listados ao lado, evitando o downgrade de rede.</p>
+                        <p class="text-sm">No entanto, esta opção <strong>retira o Hospital Sírio-Libanês e o Laboratório Alta</strong> da rede de atendimento (que hoje constam no Ouro MAX).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela Comparativa -->
+        <div class="bg-white rounded-xl overflow-hidden table-shadow border border-slate-200">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1100px]">
+                    <thead>
+                        <tr>
+                            <th class="p-4 border-b border-r border-slate-200 bg-slate-50 w-1/5">
+                                <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Segurado / Papel / Idade</span>
+                            </th>
+                            
+                            <!-- Coluna Cenário Atual (Ouro Max) -->
+                            <th class="p-4 border-b border-r border-slate-200 bg-slate-100/80 w-1/5 relative">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-slate-500"></div>
+                                <span class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Cenário Atual</span>
+                                <span class="block text-lg font-bold text-slate-800">Porto Seguro</span>
+                                <span class="block text-sm font-medium text-slate-600">Ouro MAX Q-PME</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-slate-200 text-slate-700 text-xs font-semibold rounded">Sem Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-slate-500">Reembolso (Consulta): Ouro</span>
+                            </th>
+
+                            <!-- Coluna Porto P470 -->
+                            <th class="p-4 border-b border-r border-slate-200 bg-blue-50/50 w-1/5 relative opacity-90">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                                <span class="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Proposta 1 (Downgrade)</span>
+                                <span class="block text-lg font-bold text-slate-800">Porto Seguro</span>
+                                <span class="block text-sm font-medium text-slate-600">P470 Q (Apartamento)</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">Sem Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-blue-800">Reembolso (Consulta): R$ 249,00</span>
+                            </th>
+
+                            <!-- Coluna SulAmérica -->
+                            <th class="p-4 border-b border-r border-slate-200 bg-orange-50/50 w-1/5 relative opacity-60">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-orange-500"></div>
+                                <span class="block text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Proposta 2 (Não Rec.)</span>
+                                <span class="block text-lg font-bold text-slate-800">SulAmérica</span>
+                                <span class="block text-sm font-medium text-slate-600">Especial Mais (Apt)</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded">Sem Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-orange-800">Reembolso (Consulta): R$ 330,75</span>
+                            </th>
+
+                            <!-- Coluna Amil -->
+                            <th class="p-4 border-b border-slate-200 bg-purple-50/50 w-1/5 relative">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-purple-500"></div>
+                                <span class="block text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">Proposta 3 (Recomendada)</span>
+                                <span class="block text-lg font-bold text-slate-800">Amil</span>
+                                <span class="block text-sm font-medium text-slate-600">S750 R2 QP (Apartamento)</span>
+                                <span class="inline-block mt-2 px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded">Com Coparticipação</span>
+                                <span class="block mt-2 text-xs font-medium text-purple-800">Reembolso (Consulta): R$ 240,00</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                    <!-- ================= FAMÍLIA 1 ================= -->
+                    <tbody class="divide-y divide-slate-200 avoid-break">
+                        <tr class="family-header border-y-2 border-slate-300">
+                            <td colspan="5" class="p-3 text-slate-800">
+                                <span class="font-bold text-base flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    Família 1: Faversani
+                                </span>
+                            </td>
+                        </tr>
+                        <!-- Lilian -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Lilian Ana Petillo Faversani</span>
+                                <span class="block text-xs text-blue-600 font-medium">Titular</span>
+                                <span class="block text-xs text-slate-500">60 anos (Faixa: 59+)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 4.657,07</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 2.536,60</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-orange-50/10 opacity-60">R$ 4.572,65</td>
+                            <td class="p-3 text-slate-700 bg-purple-50/10 font-medium">R$ 3.371,17</td>
+                        </tr>
+
+                        <!-- Ana Gabriela -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Ana Gabriela P. Faversani Reis</span>
+                                <span class="block text-xs text-slate-500 font-medium">Dependente 1</span>
+                                <span class="block text-xs text-slate-500">34 anos (Faixa: 34 a 38)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 1.633,79</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 919,64</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-orange-50/10 opacity-60">R$ 1.403,04</td>
+                            <td class="p-3 text-slate-700 bg-purple-50/10 font-medium">R$ 1.019,51</td>
+                        </tr>
+
+                        <!-- Guile -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Guile Faversani Altman</span>
+                                <span class="block text-xs text-slate-500 font-medium">Dependente 2</span>
+                                <span class="block text-xs text-slate-500">5 anos (Faixa: 0 a 18)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 788,15</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 506,78</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-orange-50/10 opacity-60">R$ 762,14</td>
+                            <td class="p-3 text-slate-700 bg-purple-50/10 font-medium">R$ 568,85</td>
+                        </tr>
+
+                        <!-- Subtotal Familia 1 -->
+                        <tr class="bg-slate-100/50 border-t-2 border-slate-200 text-sm">
+                            <td class="p-3 border-r border-slate-200 text-right font-bold text-slate-700 uppercase">
+                                Subtotal Família 1 (S/ IOF)
+                            </td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-slate-100">R$ 7.079,01</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-blue-50/50">R$ 3.963,02</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 opacity-60 bg-orange-50/30">R$ 6.737,83</td>
+                            <td class="p-3 font-bold text-slate-800 bg-purple-50/30">R$ 4.959,53</td>
+                        </tr>
+                    </tbody>
+
+                    <!-- ================= FAMÍLIA 2 ================= -->
+                    <tbody class="divide-y divide-slate-200 avoid-break">
+                        <tr class="family-header border-y-2 border-slate-300">
+                            <td colspan="5" class="p-3 text-slate-800">
+                                <span class="font-bold text-base flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    Família 2: Pavan
+                                </span>
+                            </td>
+                        </tr>
+                        <!-- Sonia -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Sonia Maria Villaca Salgado Pavan</span>
+                                <span class="block text-xs text-blue-600 font-medium">Titular</span>
+                                <span class="block text-xs text-slate-500">68 anos (Faixa: 59+)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 4.657,07</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 2.536,60</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-400 bg-orange-50/10 opacity-60">
+                                R$ 4.572,65 <span class="text-xs text-orange-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                            <td class="p-3 text-slate-400 bg-purple-50/10 font-medium">
+                                R$ 3.371,17 <span class="text-xs text-purple-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                        </tr>
+
+                        <!-- Luciano -->
+                        <tr class="hover:bg-slate-50 transition-colors text-sm">
+                            <td class="p-3 border-r border-slate-200 pl-8">
+                                <span class="block font-semibold text-slate-800">Luciano de Oliveira Pavan</span>
+                                <span class="block text-xs text-slate-500 font-medium">Dependente 1</span>
+                                <span class="block text-xs text-slate-500">71 anos (Faixa: 59+)</span>
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-800 font-medium bg-slate-50">R$ 4.657,07</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-700 bg-blue-50/20">R$ 2.536,60</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-400 bg-orange-50/10 opacity-60">
+                                R$ 4.572,65 <span class="text-xs text-orange-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                            <td class="p-3 text-slate-400 bg-purple-50/10 font-medium">
+                                R$ 3.371,17 <span class="text-xs text-purple-500 font-semibold ml-1" title="Valor projetado">*</span>
+                            </td>
+                        </tr>
+
+                        <!-- Subtotal Familia 2 -->
+                        <tr class="bg-slate-100/50 border-t-2 border-slate-200 text-sm">
+                            <td class="p-3 border-r border-slate-200 text-right font-bold text-slate-700 uppercase">
+                                Subtotal Família 2 (S/ IOF)
+                            </td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-slate-100">R$ 9.314,14</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-800 bg-blue-50/50">R$ 5.073,20</td>
+                            <td class="p-3 border-r border-slate-200 font-bold text-slate-500 opacity-60 bg-orange-50/30">R$ 9.145,30 <span class="text-orange-500">*</span></td>
+                            <td class="p-3 font-bold text-slate-500 bg-purple-50/30">R$ 6.742,34 <span class="text-purple-500">*</span></td>
+                        </tr>
+                    </tbody>
+
+                    <!-- ================= TOTAIS GERAIS ================= -->
+                    <tbody class="divide-y divide-slate-200 border-t-4 border-slate-300 avoid-break">
+                        <!-- Subtotal -->
+                        <tr class="bg-slate-50">
+                            <td class="p-4 border-r border-slate-200 text-right font-semibold text-slate-600">
+                                Total Geral (Sem IOF) das 5 vidas
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-slate-900 bg-slate-200/50">R$ 16.393,15</td>
+                            <td class="p-4 border-r border-slate-200 font-semibold text-slate-800">R$ 9.036,22</td>
+                            <td class="p-4 border-r border-slate-200 font-semibold text-slate-800 opacity-60">R$ 15.883,13 <span class="text-orange-500">*</span></td>
+                            <td class="p-4 font-semibold text-slate-800">R$ 11.701,87 <span class="text-purple-500">*</span></td>
+                        </tr>
+
+                        <!-- IOF -->
+                        <tr class="bg-slate-50">
+                            <td class="p-3 border-r border-slate-200 text-right font-medium text-slate-500 text-sm">
+                                Encargos (IOF)
+                            </td>
+                            <td class="p-3 border-r border-slate-200 text-slate-600 font-medium text-sm bg-slate-200/30">R$ 390,12</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-500 text-sm">R$ 215,06</td>
+                            <td class="p-3 border-r border-slate-200 text-slate-500 text-sm opacity-60">R$ 378,01</td>
+                            <td class="p-3 text-slate-500 text-sm">Embutido / Isento</td>
+                        </tr>
+
+                        <!-- TOTAL FINAL -->
+                        <tr>
+                            <td class="p-4 border-r border-slate-200 text-right font-bold text-slate-800 text-lg uppercase">
+                                Investimento Final (Mês)
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-slate-900 text-2xl bg-slate-200">
+                                R$ 16.783,27
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-blue-700 text-2xl bg-blue-50/50">
+                                R$ 9.251,28
+                            </td>
+                            <td class="p-4 border-r border-slate-200 font-bold text-orange-700 text-2xl bg-orange-50/50 opacity-60">
+                                R$ 16.261,14 <span class="text-lg text-orange-500">*</span>
+                            </td>
+                            <td class="p-4 font-bold text-purple-700 text-2xl bg-purple-50/50">
+                                R$ 11.701,87 <span class="text-lg text-purple-500">*</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Estratégia, Avisos e Metodologia em Bloco Único - COM QUEBRA DE PÁGINA AQUI -->
+        <div class="mt-6 flex flex-col lg:flex-row gap-6 page-break-before avoid-break">
+            <!-- Avisos e Metodologia -->
+            <div class="flex-1 bg-slate-50 border border-slate-200 p-5 rounded-lg shadow-sm text-sm text-slate-700">
+                <h3 class="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Avisos e Metodologia de Cálculo:
+                </h3>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Cenário Atual (Porto Ouro MAX):</strong> Extraído exatamente da fatura de <strong>Abril/2026</strong>.</li>
+                    <li><strong>Proposta 1 (Porto P470):</strong> Subtotais extraídos da Tabela Geral de Prêmios do plano <strong>P470 Q Sem Coparticipação</strong> (proposta de redução).</li>
+                    <li><strong>Coparticipação:</strong> Porto Seguro atual e propostas (Porto e SulAmérica) são planos <strong>sem coparticipação</strong>. O plano cotado da Amil (S750 R2 QP) possui <strong>coparticipação parcial, apenas para terapias</strong>, o que impacta na redução fixa da mensalidade.</li>
+                    <li><strong>Odontológico:</strong> A SulAmérica ofereceu isenção (R$ 0,00) para o plano odonto. A Amil ofereceu isenção nos 12 primeiros meses (R$ 43,50 totais após esse período).</li>
+                </ul>
+            </div>
+
+            <!-- Estratégia Operacional e Portabilidade -->
+            <div class="flex-1 bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-r shadow-sm">
+                <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                    Estratégia Operacional: Portabilidade e Divisão de Contratos
+                </h2>
+                <div class="space-y-3 text-slate-700 text-sm">
+                    <p>
+                        <strong>Sobre a Família Pavan:</strong> O contrato será feito via <strong>portabilidade</strong>. Por conta da idade, essa ação é fundamental para manter o aproveitamento de carências gerais do contrato anterior e não afetar tratamentos existentes.
+                    </p>
+                    <p>
+                        <strong>Abertura do Contrato:</strong> Isso não irá afetar o plano atual da filha. Sendo assim, será usada a inclusão dela no plano no primeiro mês especificamente para abrir o contrato de forma segura.
+                    </p>
+                    <p>
+                        <strong>Gestão de CNPJ:</strong> De antemão, seria feito o mesmo cenário utilizando o CNPJ da <strong>LEXI</strong>. Contudo, caso queiram desmembrar o contrato da Anima, o cenário ideal é usar o <strong>CNPJ do Luciano</strong> e fazer essa movimentação por lá.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Análise Geral e Veredito -->
+        <div class="mt-6 bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r shadow-sm avoid-break mb-10">
+            <h2 class="text-2xl font-bold text-emerald-900 mb-4 flex items-center gap-2">
+                <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Análise Geral e Veredito: Por que a Amil é a melhor escolha?
+            </h2>
+            <div class="space-y-4 text-slate-700">
+                <p class="text-lg">Após a análise comparativa incluindo o <strong>verdadeiro custo atual (R$ 16.783,27)</strong>, a opção <strong>Amil S750 R2 QP</strong> consagra-se como a recomendação mais inteligente, financeira e assistencialmente para o grupo.</p>
+                
+                <ul class="list-disc pl-5 space-y-3 mt-2">
+                    <li>
+                        <strong class="text-emerald-800">Economia Massiva (R$ 5.081,40 de redução mensal):</strong> 
+                        Mudar do atual Ouro MAX para a Amil representa uma economia anual na ordem de <strong>R$ 60.976,80</strong> para a empresa.
+                    </li>
+                    <li>
+                        <strong class="text-emerald-800">Preservação da Rede Premium (Hospital São Luiz):</strong> 
+                        Reduzir os custos aderindo à proposta 1 (Porto P470) geraria um grande retrocesso na qualidade hospitalar, removendo hospitais de altíssimo padrão. A Amil permite a economia enquanto garante a <strong>manutenção de toda a rede São Luiz</strong>, essencial para emergências, cirurgias e maternidade.
+                    </li>
+                    <li>
+                        <strong class="text-emerald-800">A inviabilidade da SulAmérica:</strong> 
+                        A opção da SulAmérica, que manteria o mesmo nível de atendimento da Amil, não traz alívio financeiro algum. Seu custo (R$ 16.261,14) é praticamente idêntico ao altíssimo valor que a empresa já paga hoje.
+                    </li>
+                    <li>
+                        <strong class="text-emerald-800">Coparticipação Inteligente e Segura:</strong> 
+                        Embora a Amil possua coparticipação (diferente da Porto atual), ela incide <strong>apenas sobre terapias</strong>. Isso significa que é perfeitamente previsível. Grandes riscos e altos custos, como internações, cirurgias e passagens em pronto-socorro, <strong>não possuem nenhuma cobrança extra</strong>.
+                    </li>
+                </ul>
+
+                <div class="mt-6 p-5 bg-emerald-100/60 rounded-lg border border-emerald-300">
+                    <p class="text-xl text-emerald-900">
+                        <strong>Conclusão Final:</strong> A <strong class="text-emerald-700">Proposta 3 (Amil S750)</strong> entrega o "melhor dos mundos". Ela foge da mensalidade proibitiva do atual Ouro MAX, evita o rebaixamento doloroso da rede credenciada do P470 e instaura um modelo de coparticipação focado apenas em terapias, protegendo a família financeiramente de grandes eventos hospitalares.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
