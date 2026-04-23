@@ -123,7 +123,7 @@
             background-color: #f8fafc; 
             border-radius: 12px; 
             border: 2px solid #e2e8f0; 
-            padding: 40px; 
+            padding: 30px 40px; 
             text-align: center;
             transition: all 0.4s ease;
             cursor: default;
@@ -164,6 +164,7 @@
         .image-wrapper { border-radius: 12px; height: 400px; max-width: 100%; overflow: hidden; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .image-wrapper img { height: 100%; max-width: 100%; object-fit: cover; width: 100%; }
         .two-column .image-wrapper img { object-fit: contain; background: #f1f5f9; }
+        .image-cover { object-fit: cover !important; }
 
         /* Tiled Icons */
         .tiled-content { align-items: stretch; display: flex; gap: 40px; justify-content: center; width: 100%; }
@@ -172,7 +173,7 @@
             display: flex; flex-direction: column; flex: 1; justify-content: flex-start; padding: 30px; text-align: center;
         }
         .tile .icon { color: #10b981; font-size: 48px; margin-bottom: 20px; }
-        .tile h3 { font-size: 26px; color: #1e293b; }
+        .tile h3 { font-size: 26px; color: #1e293b; margin-bottom: 10px; }
 
         /* Highlighted Numbers */
         .highlight-numbers-layout > div:first-child { flex: 0 0 40%; text-align: center; }
@@ -215,7 +216,7 @@
         .table-layout td { font-size: 16px; }
 
         /* =========================================
-           NEW: BENEFICIARY INTERACTIVE LAYOUT
+           BENEFICIARY INTERACTIVE LAYOUT
            ========================================= */
         .ben-layout { display: flex; gap: 20px; width: 100%; height: 380px; }
         .ben-sidebar { flex: 0 0 250px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; }
@@ -288,10 +289,19 @@
 
 <!-- Slide 1: Title_Slide -->
 <div class="slide-container dark-theme" id="slide1">
-    <div class="title-layout">
-        <h1>Análise Estratégica</h1>
-        <p class="subtitle" style="color:#10b981; font-weight:bold;">Migração de Plano de Saúde Corporativo</p>
-        <p class="subtitle">Estudo de viabilidade financeira e assistencial interativo (5 Vidas)</p>
+    <div class="content-area">
+        <div class="two-column" style="align-items: center; width: 100%; max-width: 1100px;">
+            <div class="title-layout" style="text-align: left;">
+                <h1>Análise Estratégica</h1>
+                <p class="subtitle" style="color:#10b981; font-weight:bold; margin-left:0;">Migração de Plano de Saúde Corporativo</p>
+                <p class="subtitle" style="margin-left:0; max-width: 100%;">Estudo de viabilidade financeira e assistencial interativo (5 Vidas)</p>
+            </div>
+            <div>
+                <div class="image-wrapper image-cover" style="height: 400px; border: 4px solid #1e293b;">
+                    <img src="" alt="Equipa Médica">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -308,7 +318,7 @@
             </div>
             <div>
                 <div class="image-wrapper">
-                    <img src="http://googleusercontent.com/image_collection/image_retrieval/2380247845098113693" alt="Consultoria corporativa em saúde">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/2380247845098113693" class="image-cover" alt="Consultoria corporativa em saúde">
                 </div>
             </div>
         </div>
@@ -322,7 +332,7 @@
         <div class="two-column">
             <!-- Family 1 Card -->
             <div class="family-card">
-                <i class="fa-solid fa-people-roof" style="font-size:40px; color:#6366f1; margin-bottom:15px;"></i>
+                <img src="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid #6366f1;" alt="Família Faversani">
                 <h3>Família 1: Faversani</h3>
                 <p>Contempla 3 vidas, com necessidade de atendimento de excelência, especialmente para maternidade e pediatria.</p>
                 <p class="instruction">Passe o rato para ver os membros <i class="fa-solid fa-chevron-down"></i></p>
@@ -338,7 +348,7 @@
 
             <!-- Family 2 Card -->
             <div class="family-card">
-                <i class="fa-solid fa-user-group" style="font-size:40px; color:#6366f1; margin-bottom:15px;"></i>
+                <img src="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid #6366f1;" alt="Família Pavan">
                 <h3>Família 2: Pavan</h3>
                 <p>Contempla 2 vidas na faixa etária sénior. Exige máxima cautela (portabilidade) para não afetar tratamentos em curso.</p>
                 <p class="instruction">Passe o rato para ver os membros <i class="fa-solid fa-chevron-down"></i></p>
@@ -360,17 +370,17 @@
     <div class="content-area">
         <div class="tiled-content">
             <div class="tile">
-                <div class="icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                <img src="" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;" alt="Hospital Padrão">
                 <h3 style="color:#3b82f6;">Porto P470</h3>
                 <p>Reduz agressivamente o custo para R$ 9,2 mil, mas causa um sério downgrade de rede, cortando toda a rede São Luiz.</p>
             </div>
             <div class="tile">
-                <div class="icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                <img src="" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;" alt="Hospital Premium">
                 <h3 style="color:#f97316;">SulAmérica</h3>
                 <p>Plano Especial Mais. Mantém a rede premium, mas o valor salta para mais de R$ 16,2 mil (inviável financeiramente).</p>
             </div>
             <div class="tile" style="border: 2px solid #10b981; background-color:#ecfdf5;">
-                <div class="icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                <img src="" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;" alt="Equilíbrio Ideal">
                 <h3 style="color:#10b981;">Amil S750</h3>
                 <p>A solução ideal. Mensalidade de R$ 11,7 mil, mantendo a rede São Luiz e com coparticipação inteligente (só terapias).</p>
             </div>
@@ -382,6 +392,9 @@
 <div class="slide-container" id="slide5">
     <h2 class="slide-title">Comparativo de Custos Mensais</h2>
     <div class="content-area">
+        <div class="image-wrapper" style="height: 180px; width: 100%; margin-bottom: 10px;">
+            <img src="" class="image-cover" alt="Análise Financeira">
+        </div>
         <div class="chart-container">
             <div class="bar">
                 <div class="label">Cenário Atual (Ouro MAX)</div>
@@ -406,7 +419,10 @@
 
 <!-- Slide 6: Interactive Tabbed Financial Table -->
 <div class="slide-container" id="slide6">
-    <h2 class="slide-title">Detalhamento Financeiro Interativo</h2>
+    <h2 class="slide-title" style="display: flex; align-items: center; gap: 20px;">
+        Detalhamento Financeiro Interativo
+        <img src="" style="height: 60px; border-radius: 8px; object-fit: cover; width: 150px;" alt="Documentos Financeiros">
+    </h2>
     <div class="content-area">
         
         <div class="interactive-tabs-container">
@@ -672,6 +688,9 @@
                 <h3>Redução de R$ 5.081,40 por Mês</h3>
                 <p>Mudar do atual Ouro MAX para o plano <strong>Amil S750</strong> gera uma economia massiva para a empresa.</p>
                 <p>Ao longo de 12 meses, essa diferença injeta quase R$ 61.000,00 de volta no fluxo de caixa, pagando praticamente 5 meses integrais do novo plano.</p>
+                <div class="image-wrapper" style="height: 220px; margin-top: 30px;">
+                    <img src="" class="image-cover" alt="Poupança e Finanças">
+                </div>
             </div>
         </div>
     </div>
@@ -700,7 +719,7 @@
             </div>
             <div>
                 <div class="image-wrapper">
-                    <img src="http://googleusercontent.com/image_collection/image_retrieval/12215545632361093560" alt="Fachada de hospital moderno de alta tecnologia">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/12215545632361093560" class="image-cover" alt="Fachada de hospital moderno de alta tecnologia">
                 </div>
             </div>
         </div>
@@ -711,24 +730,31 @@
 <div class="slide-container" id="slide9">
     <h2 class="slide-title">Estratégia Operacional</h2>
     <div class="content-area">
-        <div class="bullet-list">
-            <ul>
-                <li>
-                    <i class="fa-solid fa-file-contract"></i>
-                    <strong>Portabilidade Estratégica (Família Pavan):</strong> 
-                    Devido à faixa etária (59+), a portabilidade é rigorosamente essencial. Isso garante o aproveitamento total das carências do contrato Ouro MAX, blindando eventuais tratamentos em andamento.
-                </li>
-                <li>
-                    <i class="fa-solid fa-user-plus"></i>
-                    <strong>Abertura Segura de Contrato:</strong> 
-                    Para iniciar o contrato sem riscos operacionais, usaremos a inclusão da filha no primeiro mês. Esse movimento ativa o plano de imediato sem afetar a vigência e a segurança das demais vidas em transição.
-                </li>
-                <li>
-                    <i class="fa-solid fa-building"></i>
-                    <strong>Gestão de CNPJ (LEXI x Luciano):</strong> 
-                    A modelagem padrão utiliza o CNPJ da LEXI. Porém, caso haja a intenção estratégica de desmembrar o contrato atual da Anima, faremos a movimentação diretamente via CNPJ do Sr. Luciano.
-                </li>
-            </ul>
+        <div class="two-column" style="align-items: center;">
+            <div class="bullet-list">
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-file-contract"></i>
+                        <strong>Portabilidade Estratégica (Família Pavan):</strong> 
+                        Devido à faixa etária (59+), a portabilidade é rigorosamente essencial. Isso garante o aproveitamento total das carências do contrato Ouro MAX, blindando eventuais tratamentos em andamento.
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-user-plus"></i>
+                        <strong>Abertura Segura de Contrato:</strong> 
+                        Para iniciar o contrato sem riscos operacionais, usaremos a inclusão da filha no primeiro mês. Esse movimento ativa o plano de imediato sem afetar a vigência e a segurança das demais vidas em transição.
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-building"></i>
+                        <strong>Gestão de CNPJ (LEXI x Luciano):</strong> 
+                        A modelagem padrão utiliza o CNPJ da LEXI. Porém, caso haja a intenção estratégica de desmembrar o contrato atual da Anima, faremos a movimentação diretamente via CNPJ do Sr. Luciano.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div class="image-wrapper" style="height: 400px;">
+                    <img src="" class="image-cover" alt="Estratégia Operacional">
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -755,6 +781,9 @@
 <div class="slide-container" id="slide11">
     <h2 class="slide-title">Próximos Passos</h2>
     <div class="content-area">
+        <div class="image-wrapper" style="height: 180px; width: 100%; margin-bottom: 40px;">
+            <img src="" class="image-cover" alt="Próximos Passos e Calendário">
+        </div>
         <div class="timeline-layout">
             <div class="timeline-line"></div>
             <div class="timeline-item">
@@ -788,6 +817,7 @@
 <!-- Slide 12: Q&A -->
 <div class="slide-container dark-theme" id="slide12">
     <div class="qa-layout">
+        <img src="" style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover; margin: 0 auto 30px; display: block; border: 4px solid #10b981;" alt="Apoio ao Cliente">
         <h2>Dúvidas?</h2>
         <p style="color:#f8fafc;">A decisão está em suas mãos. Estamos prontos para iniciar o processo.</p>
         <div class="contact-info" style="color:#10b981;">
